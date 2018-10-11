@@ -13,7 +13,10 @@ matrix.o: matrix.cpp matrix.h
 row.o: row.cpp row.h
 	${CC} ${CFLAGS} -c row.cpp 
 
+professor: row.cpp matrix.cpp rref.cpp
+	python3 combine_files.py
 
 clean:
 	rm -f rref
 	rm -f *.o
+	rm -f consolidated_rref.cpp

@@ -3,6 +3,10 @@
 #include <ostream>
 #include <utility>
 #include <vector>
+
+// Just a wrapper around a vector of Doubles.
+// Contains arithmetic operators and ostream for convenience.
+
 class Row {
 private:
   std::vector<double> _data;

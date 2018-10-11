@@ -1,6 +1,4 @@
 #include "matrix.h"
-// Just a wrapper around a vector of Rows.
-// Contains an rref operation for solving systems of equations.
 Matrix::Matrix(const std::vector<Row> &rows) { _rows = rows; }
 
 // Modifies the matrix!
@@ -9,6 +7,8 @@ void Matrix::swap_rows(size_t i1, size_t i2) {
 }
 
 // Modifies the matrix!
+// Note the pointer to an ostream. If you call this function with a reference
+// to an ostream, it'll print each step of the rref process for you.
 void Matrix::rref_mut(std::ostream *os) {
   bool has_index;
   for (size_t i = 0; i < _rows[0].size() - 1; i++) {
@@ -47,6 +47,8 @@ void Matrix::rref_mut(std::ostream *os) {
   }
 }
 
+// Non-mutable version of the above. Creates a new matrix and performs
+// the mutable rref on that.
 Matrix Matrix::rref(std::ostream *os) const {
   Matrix result = *this;
   result.rref_mut(os);
