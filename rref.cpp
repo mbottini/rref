@@ -10,6 +10,7 @@ template <typename T1, typename T2>
 std::vector<std::pair<T1, T2>> zip(const std::vector<T1> &v1,
                                    const std::vector<T2> &v2);
 
+// Literally just a wrapper around a vector, with arithmetic operations.
 class Row
 {
   private:
@@ -107,6 +108,8 @@ class Row
     }
 };
 
+// Just a wrapper around a vector of Rows.
+// Contains an rref operation for solving systems of equations.
 class Matrix
 {
   private:
@@ -208,15 +211,16 @@ Matrix create_matrix(size_t rows, size_t cols)
     std::vector<Row> result_vec;
     bool good_input;
 
-    // Clearing std::cin before we do anything.
+    // Clearing std::cin before we do anything, as it's likely that someone used
+    // the >> operator on cin before this function. The two don't mix :(
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
     for (size_t i = 0; i < rows; i++)
     {
-        parsed_line.clear();
         do
         {
+            parsed_line.clear();
             good_input = true;
             std::cout << "Input a line for row " << i + 1 << ": ";
             std::getline(std::cin, input_line);
