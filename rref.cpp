@@ -1,6 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <utility>
+#include <sstream>
+#include <string>
+#include <limits>
 
 // zip is the same as the Python function.
 template <typename T1, typename T2>
@@ -196,20 +199,62 @@ std::vector<std::pair<T1, T2>> zip(const std::vector<T1> &v1,
     return result_vec;
 }
 
+Matrix create_matrix(size_t rows, size_t cols)
+{
+    std::stringstream ss;
+    std::string input_line;
+    double current_double;
+    std::vector<double> parsed_line;
+    std::vector<Row> result_vec;
+    bool good_input;
+
+    // Clearing std::cin before we do anything.
+    std::cin.clear();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+    for (size_t i = 0; i < rows; i++)
+    {
+        parsed_line.clear();
+        do
+        {
+            good_input = true;
+            std::cout << "Input a line for row " << i + 1 << ": ";
+            std::getline(std::cin, input_line);
+            ss = std::stringstream(input_line);
+            while (parsed_line.size() != cols && ss >> current_double)
+            {
+                parsed_line.push_back(current_double);
+            }
+            // If the stream ran out of chars, or there are leftover chars,
+            // it's invalid input.
+            if (ss.fail() || ss.rdbuf()->in_avail() > 0)
+            {
+                good_input = false;
+                std::cout << "Invalid input. Try again.\n";
+            }
+        } while (!good_input);
+        result_vec.push_back(parsed_line);
+    }
+
+    return Matrix(result_vec);
+}
+
 int main()
 {
-    std::vector<double> v1 = {1, 2, 3, 9};
-    std::vector<double> v2 = {2, -1, 1, 8};
-    std::vector<double> v3 = {3, 0, -1, 3};
+    size_t rows, cols;
 
-    Row r1(v1);
-    Row r2(v2);
-    Row r3(v3);
+    std::cout << "Input the number of rows: ";
+    std::cin >> rows;
 
-    std::vector<Row> r_v = {v1, v2, v3};
+    std::cout << "Input the number of columns: ";
+    std::cin >> cols;
 
-    Matrix m(r_v);
+    Matrix m = create_matrix(rows, cols);
 
+    std::cout << "Your matrix:\n";
+    std::cout << m;
+
+    std::cout << "In rref:\n";
     std::cout << m.rref();
 
     return 0;
