@@ -1,5 +1,5 @@
 CC=clang++
-CFLAGS=-Wall -Werror --std=c++17
+CFLAGS=-Wall -Werror
 
 rref: rref.cpp
 	${CC} ${CFLAGS} rref.cpp -o rref
