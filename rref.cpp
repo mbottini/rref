@@ -151,8 +151,9 @@ template <typename T1, typename T2>
 std::vector<std::pair<T1, T2>> zip(const std::vector<T1> &v1,
                                    const std::vector<T2> &v2) {
   std::vector<std::pair<T1, T2>> result_vec;
-  for (auto it1 = v1.begin(), it2 = v2.begin();
-       it1 != v1.end() && it2 != v2.end(); ++it1, ++it2) {
+  auto it1 = v1.begin();
+  auto it2 = v2.begin();
+  for (; it1 != v1.end() && it2 != v2.end(); ++it1, ++it2) {
     result_vec.emplace_back(*it1, *it2);
   }
   return result_vec;
