@@ -1,6 +1,7 @@
 #ifndef ROW_H
 #define ROW_H
 #include <ostream>
+#include <utility>
 #include <vector>
 class Row {
 private:
@@ -26,4 +27,10 @@ public:
 };
 
 std::ostream &operator<<(std::ostream &os, const Row &r);
+
+// zip is the same as the Python function.
+template <typename T1, typename T2>
+std::vector<std::pair<T1, T2>> zip(const std::vector<T1> &v1,
+                                   const std::vector<T2> &v2);
+
 #endif
