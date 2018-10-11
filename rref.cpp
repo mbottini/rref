@@ -18,24 +18,14 @@ class Row
         _data = orig;
     }
 
-    friend Row operator*(const Row &orig, double scalar)
+    size_t size() const
     {
-        std::vector<double> result_vec;
-        for (double elem : orig._data)
-        {
-            result_vec.push_back(elem * scalar);
-        }
-        return Row(result_vec);
+        return _data.size();
     }
 
-    friend Row operator-(const Row &orig)
+    double operator[](size_t index) const
     {
-        std::vector<double> result_vec;
-        for (double elem : orig._data)
-        {
-            result_vec.push_back(-elem);
-        }
-        return Row(result_vec);
+        return _data.at(index);
     }
 
     friend Row operator+(const Row &r1, const Row &r2)
@@ -48,9 +38,58 @@ class Row
         return result_vec;
     }
 
+    Row &operator+=(const Row &other)
+    {
+        *this = *this + other;
+        return *this;
+    }
+
     friend Row operator-(const Row &r1, const Row &r2)
     {
         return r1 + (-r2);
+    }
+
+    Row &operator-=(const Row &other)
+    {
+        *this = *this - other;
+        return *this;
+    }
+
+    friend Row operator*(const Row &orig, double scalar)
+    {
+        std::vector<double> result_vec;
+        for (double elem : orig._data)
+        {
+            result_vec.push_back(elem * scalar);
+        }
+        return Row(result_vec);
+    }
+
+    Row &operator*=(double scalar)
+    {
+        *this = *this * scalar;
+        return *this;
+    }
+
+    friend Row operator/(const Row &orig, double scalar)
+    {
+        return orig * (1 / scalar);
+    }
+
+    Row &operator/=(double scalar)
+    {
+        *this = *this / scalar;
+        return *this;
+    }
+
+    friend Row operator-(const Row &orig)
+    {
+        std::vector<double> result_vec;
+        for (double elem : orig._data)
+        {
+            result_vec.push_back(-elem);
+        }
+        return Row(result_vec);
     }
 
     friend std::ostream &operator<<(std::ostream &os, const Row &r)
@@ -61,6 +100,84 @@ class Row
             os << elem << " ";
         }
         os << "]";
+        return os;
+    }
+};
+
+class Matrix
+{
+  private:
+    std::vector<Row> _rows;
+
+  public:
+    Matrix(const std::vector<Row> &rows)
+    {
+        _rows = rows;
+    }
+
+    // Modifies the matrix!
+    void swap_rows(size_t i1, size_t i2)
+    {
+        std::swap(_rows[i1], _rows[i2]);
+    }
+
+    // Modifies the matrix!
+    void rref_mut(std::ostream *os = 0)
+    {
+        bool has_index;
+        for (size_t i = 0; i < _rows[0].size() - 1; i++)
+        {
+            has_index = true;
+            // If the current row has a 0 in the current column, we have to swap
+            // it with another row that does have that index.
+            if (_rows[i][i] == 0)
+            {
+                has_index = false;
+                for (size_t j = i + 1; j < _rows.size(); j++)
+                {
+                    if (_rows[j][i] != 0)
+                    {
+                        swap_rows(i, j);
+                        has_index = true;
+                        break;
+                    }
+                }
+                // If we can't find the index, skip this column.
+                if (!has_index)
+                {
+                    continue;
+                }
+            }
+
+            // Ensure that there's a 1 in that index.
+            _rows[i] /= _rows[i][i];
+
+            // Now we eliminate that column from all of the other rows.
+            for (size_t j = i + 1; j < _rows.size(); j++)
+            {
+                _rows[j] -= _rows[i] * _rows[j][i];
+            }
+
+            for (size_t j = 0; j < i; j++)
+            {
+                _rows[j] -= _rows[i] * _rows[j][i];
+            }
+        }
+    }
+
+    Matrix rref(std::ostream *os = 0) const
+    {
+        Matrix result = *this;
+        result.rref_mut(os);
+        return result;
+    }
+
+    friend std::ostream &operator<<(std::ostream &os, const Matrix &m)
+    {
+        for (auto v : m._rows)
+        {
+            os << v << "\n";
+        }
         return os;
     }
 };
@@ -81,15 +198,19 @@ std::vector<std::pair<T1, T2>> zip(const std::vector<T1> &v1,
 
 int main()
 {
-    std::vector<double> v1 = {1, 2, 3};
-    std::vector<double> v2 = {2, 3, 4};
+    std::vector<double> v1 = {1, 2, 3, 9};
+    std::vector<double> v2 = {2, -1, 1, 8};
+    std::vector<double> v3 = {3, 0, -1, 3};
+
     Row r1(v1);
     Row r2(v2);
+    Row r3(v3);
 
-    std::cout << r1 + r2 << "\n";
-    std::cout << r1 - r2 << "\n";
-    std::cout << r1 * 3 << "\n";
-    std::cout << -r1 << "\n";
+    std::vector<Row> r_v = {v1, v2, v3};
+
+    Matrix m(r_v);
+
+    std::cout << m.rref();
 
     return 0;
 }
