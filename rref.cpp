@@ -22,9 +22,9 @@ public:
 
   double operator[](size_t index) const { return _data.at(index); }
 
-  friend Row operator+(const Row &r1, const Row &r2) {
+  Row operator+(const Row &other) const {
     std::vector<double> result_vec;
-    for (auto p : zip(r1._data, r2._data)) {
+    for (auto p : zip(this->_data, other._data)) {
       result_vec.push_back(p.first + p.second);
     }
     return result_vec;
@@ -35,16 +35,16 @@ public:
     return *this;
   }
 
-  friend Row operator-(const Row &r1, const Row &r2) { return r1 + (-r2); }
+  Row operator-(const Row &r2) const { return *this + (-r2); }
 
   Row &operator-=(const Row &other) {
     *this = *this - other;
     return *this;
   }
 
-  friend Row operator*(const Row &orig, double scalar) {
+  Row operator*(double scalar) const {
     std::vector<double> result_vec;
-    for (double elem : orig._data) {
+    for (double elem : _data) {
       result_vec.push_back(elem * scalar);
     }
     return Row(result_vec);
@@ -55,9 +55,7 @@ public:
     return *this;
   }
 
-  friend Row operator/(const Row &orig, double scalar) {
-    return orig * (1 / scalar);
-  }
+  Row operator/(double scalar) { return *this * (1 / scalar); }
 
   Row &operator/=(double scalar) {
     *this = *this / scalar;
@@ -65,23 +63,25 @@ public:
   }
 
   // Unary minus.
-  friend Row operator-(const Row &orig) {
+  Row operator-() const {
     std::vector<double> result_vec;
-    for (double elem : orig._data) {
+    for (double elem : _data) {
       result_vec.push_back(-elem);
     }
     return Row(result_vec);
   }
 
-  friend std::ostream &operator<<(std::ostream &os, const Row &r) {
+  std::ostream &write(std::ostream &os) const {
     os << "[ ";
-    for (double elem : r._data) {
+    for (double elem : _data) {
       os << elem << " ";
     }
     os << "]";
     return os;
   }
 };
+
+std::ostream &operator<<(std::ostream &os, const Row &r) { return r.write(os); }
 
 // Just a wrapper around a vector of Rows.
 // Contains an rref operation for solving systems of equations.
@@ -129,7 +129,7 @@ public:
       }
 
       if (os) {
-        *os << *this << "\n";
+        this->write(*os) << "\n";
       }
     }
   }
@@ -140,13 +140,17 @@ public:
     return result;
   }
 
-  friend std::ostream &operator<<(std::ostream &os, const Matrix &m) {
-    for (auto v : m._rows) {
+  std::ostream &write(std::ostream &os) const {
+    for (auto v : _rows) {
       os << v << "\n";
     }
     return os;
   }
 };
+
+std::ostream &operator<<(std::ostream &os, const Matrix &m) {
+  return m.write(os);
+}
 
 template <typename T1, typename T2>
 std::vector<std::pair<T1, T2>> zip(const std::vector<T1> &v1,
