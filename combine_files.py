@@ -1,3 +1,8 @@
+"""Simple utility to concatenate the files in this program into a single file.
+   This is due to the fact that the professor has hundreds of students and 
+   doesn't want to fiddle with lots and lots of files."""
+
+
 TARGET_NAME = "consolidated_rref.cpp"
 
 
