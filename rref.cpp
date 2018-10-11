@@ -168,6 +168,11 @@ class Matrix
             {
                 _rows[j] -= _rows[i] * _rows[j][i];
             }
+
+            if (os)
+            {
+                *os << *this << "\n";
+            }
         }
     }
 
@@ -258,8 +263,11 @@ int main()
     std::cout << "Your matrix:\n";
     std::cout << m;
 
-    std::cout << "In rref:\n";
-    std::cout << m.rref();
+    std::cout << "Showing the steps:\n";
+    Matrix result = m.rref(&std::cout);
+
+    std::cout << "Result:\n";
+    std::cout << result << "\n";
 
     return 0;
 }
