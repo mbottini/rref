@@ -19,7 +19,7 @@ public:
   Row &operator-=(const Row &other);
   Row operator*(double scalar) const;
   Row &operator*=(double scalar);
-  Row operator/(double scalar);
+  Row operator/(double scalar) const;
   Row &operator/=(double scalar);
   Row operator-() const;
   std::ostream &write(std::ostream &os) const;

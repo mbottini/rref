@@ -51,7 +51,7 @@ Row &Row::operator*=(double scalar) {
   return *this;
 }
 
-Row Row::operator/(double scalar) { return *this * (1 / scalar); }
+Row Row::operator/(double scalar) const { return *this * (1 / scalar); }
 
 Row &Row::operator/=(double scalar) {
   *this = *this / scalar;
