@@ -64,6 +64,7 @@ public:
     return *this;
   }
 
+  // Unary minus.
   friend Row operator-(const Row &orig) {
     std::vector<double> result_vec;
     for (double elem : orig._data) {
