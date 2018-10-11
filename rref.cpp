@@ -1,3 +1,5 @@
+#include "matrix.h"
+#include "row.h"
 #include <iostream>
 #include <limits>
 #include <sstream>
@@ -10,143 +12,131 @@ template <typename T1, typename T2>
 std::vector<std::pair<T1, T2>> zip(const std::vector<T1> &v1,
                                    const std::vector<T2> &v2);
 
-// Literally just a wrapper around a vector, with arithmetic operations.
-class Row {
-private:
-  std::vector<double> _data;
+Row::Row(const std::vector<double> &orig) { _data = orig; }
 
-public:
-  Row(const std::vector<double> &orig) { _data = orig; }
+size_t Row::size() const { return _data.size(); }
 
-  size_t size() const { return _data.size(); }
+double Row::operator[](size_t index) const { return _data.at(index); }
 
-  double operator[](size_t index) const { return _data.at(index); }
-
-  Row operator+(const Row &other) const {
-    std::vector<double> result_vec;
-    for (auto p : zip(this->_data, other._data)) {
-      result_vec.push_back(p.first + p.second);
-    }
-    return result_vec;
+Row Row::operator+(const Row &other) const {
+  std::vector<double> result_vec;
+  for (auto p : zip(this->_data, other._data)) {
+    result_vec.push_back(p.first + p.second);
   }
+  return result_vec;
+}
 
-  Row &operator+=(const Row &other) {
-    *this = *this + other;
-    return *this;
+Row &Row::operator+=(const Row &other) {
+  *this = *this + other;
+  return *this;
+}
+
+Row Row::operator-(const Row &r2) const { return *this + (-r2); }
+
+Row &Row::operator-=(const Row &other) {
+  *this = *this - other;
+  return *this;
+}
+
+Row Row::operator*(double scalar) const {
+  std::vector<double> result_vec;
+  for (double elem : _data) {
+    result_vec.push_back(elem * scalar);
   }
+  return Row(result_vec);
+}
 
-  Row operator-(const Row &r2) const { return *this + (-r2); }
+Row &Row::operator*=(double scalar) {
+  *this = *this * scalar;
+  return *this;
+}
 
-  Row &operator-=(const Row &other) {
-    *this = *this - other;
-    return *this;
+Row Row::operator/(double scalar) { return *this * (1 / scalar); }
+
+Row &Row::operator/=(double scalar) {
+  *this = *this / scalar;
+  return *this;
+}
+
+Row Row::operator-() const {
+  std::vector<double> result_vec;
+  for (double elem : _data) {
+    result_vec.push_back(-elem);
   }
+  return Row(result_vec);
+}
 
-  Row operator*(double scalar) const {
-    std::vector<double> result_vec;
-    for (double elem : _data) {
-      result_vec.push_back(elem * scalar);
-    }
-    return Row(result_vec);
+std::ostream &Row::write(std::ostream &os) const {
+  os << "[ ";
+  for (double elem : _data) {
+    os << elem << " ";
   }
-
-  Row &operator*=(double scalar) {
-    *this = *this * scalar;
-    return *this;
-  }
-
-  Row operator/(double scalar) { return *this * (1 / scalar); }
-
-  Row &operator/=(double scalar) {
-    *this = *this / scalar;
-    return *this;
-  }
-
-  // Unary minus.
-  Row operator-() const {
-    std::vector<double> result_vec;
-    for (double elem : _data) {
-      result_vec.push_back(-elem);
-    }
-    return Row(result_vec);
-  }
-
-  std::ostream &write(std::ostream &os) const {
-    os << "[ ";
-    for (double elem : _data) {
-      os << elem << " ";
-    }
-    os << "]";
-    return os;
-  }
-};
+  os << "]";
+  return os;
+}
 
 std::ostream &operator<<(std::ostream &os, const Row &r) { return r.write(os); }
 
 // Just a wrapper around a vector of Rows.
 // Contains an rref operation for solving systems of equations.
-class Matrix {
-private:
-  std::vector<Row> _rows;
+Matrix::Matrix(const std::vector<Row> &rows) { _rows = rows; }
 
-public:
-  Matrix(const std::vector<Row> &rows) { _rows = rows; }
+// Modifies the matrix!
+void Matrix::swap_rows(size_t i1, size_t i2) {
+  std::swap(_rows[i1], _rows[i2]);
+}
 
-  // Modifies the matrix!
-  void swap_rows(size_t i1, size_t i2) { std::swap(_rows[i1], _rows[i2]); }
-
-  // Modifies the matrix!
-  void rref_mut(std::ostream *os = 0) {
-    bool has_index;
-    for (size_t i = 0; i < _rows[0].size() - 1; i++) {
-      // If the current row has a 0 in the current column, we have to swap
-      // it with another row that does have that index.
-      if (_rows[i][i] == 0) {
-        has_index = false;
-        for (size_t j = i + 1; j < _rows.size(); j++) {
-          if (_rows[j][i] != 0) {
-            swap_rows(i, j);
-            has_index = true;
-            break;
-          }
-        }
-        // If we can't find the index, skip this column.
-        if (!has_index) {
-          continue;
-        }
-      }
-
-      // Ensure that there's a 1 in that index.
-      _rows[i] /= _rows[i][i];
-
-      // Now we eliminate that column from all of the other rows.
+// Modifies the matrix!
+void Matrix::rref_mut(std::ostream *os) {
+  bool has_index;
+  for (size_t i = 0; i < _rows[0].size() - 1; i++) {
+    // If the current row has a 0 in the current column, we have to swap
+    // it with another row that does have that index.
+    if (_rows[i][i] == 0) {
+      has_index = false;
       for (size_t j = i + 1; j < _rows.size(); j++) {
-        _rows[j] -= _rows[i] * _rows[j][i];
+        if (_rows[j][i] != 0) {
+          swap_rows(i, j);
+          has_index = true;
+          break;
+        }
       }
-
-      for (size_t j = 0; j < i; j++) {
-        _rows[j] -= _rows[i] * _rows[j][i];
-      }
-
-      if (os) {
-        this->write(*os) << "\n";
+      // If we can't find the index, skip this column.
+      if (!has_index) {
+        continue;
       }
     }
-  }
 
-  Matrix rref(std::ostream *os = 0) const {
-    Matrix result = *this;
-    result.rref_mut(os);
-    return result;
-  }
+    // Ensure that there's a 1 in that index.
+    _rows[i] /= _rows[i][i];
 
-  std::ostream &write(std::ostream &os) const {
-    for (auto v : _rows) {
-      os << v << "\n";
+    // Now we eliminate that column from all of the other rows.
+    for (size_t j = i + 1; j < _rows.size(); j++) {
+      _rows[j] -= _rows[i] * _rows[j][i];
     }
-    return os;
+
+    for (size_t j = 0; j < i; j++) {
+      _rows[j] -= _rows[i] * _rows[j][i];
+    }
+
+    if (os) {
+      *os << *this << "\n";
+    }
   }
-};
+}
+
+Matrix Matrix::rref(std::ostream *os) const {
+  Matrix result = *this;
+  result.rref_mut(os);
+  return result;
+}
+
+std::ostream &Matrix::write(std::ostream &os) const {
+  for (auto v : _rows) {
+    os << v << "\n";
+  }
+  return os;
+}
 
 std::ostream &operator<<(std::ostream &os, const Matrix &m) {
   return m.write(os);
