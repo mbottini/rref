@@ -9,7 +9,9 @@ public:
   Matrix(const std::vector<Row> &rows);
   void swap_rows(size_t i1, size_t i2);
   void rref_mut(std::ostream *os = 0);
+  void triangular_mut(std::ostream *os = 0);
   Matrix rref(std::ostream *os = 0) const;
+  Matrix triangular(std::ostream *os = 0) const;
   std::ostream &write(std::ostream &os) const;
 };
 

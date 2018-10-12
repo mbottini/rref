@@ -56,7 +56,10 @@ int main() {
   std::cout << "Your matrix:\n";
   std::cout << m;
 
-  std::cout << "Showing the steps:\n";
+  std::cout << "Triangular form:\n";
+  std::cout << m.triangular();
+
+  std::cout << "Showing the steps for rref:\n";
   Matrix result = m.rref(&std::cout);
 
   std::cout << "Result:\n";
