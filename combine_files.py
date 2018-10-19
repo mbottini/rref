@@ -2,6 +2,8 @@
    This is due to the fact that the professor has hundreds of students and 
    doesn't want to fiddle with lots and lots of files."""
 
+import re
+
 
 TARGET_NAME = "consolidated_rref.cpp"
 
@@ -13,7 +15,8 @@ def write_comment(fh, s):
 def write_file(fh, filename):
     with open(filename) as source:
         for line in source:
-            fh.write(line)
+            if not re.search('#include "', line):
+                fh.write(line)
 
 
 FILES = ["row.h",
