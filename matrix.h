@@ -18,6 +18,8 @@ public:
   Matrix triangular(std::ostream *os = 0) const;
   bool no_solutions() const;
   bool infinite_solutions() const;
+  size_t num_variables() const;
+  size_t num_nonzero_rows() const;
   std::ostream &write(std::ostream &os) const;
 };
 

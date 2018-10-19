@@ -105,12 +105,31 @@ bool Matrix::no_solutions() const {
 }
 
 bool Matrix::infinite_solutions() const {
-  for(auto &row : _rows) {
-    if(row.infinite_solutions()) {
-      return true;
+   return num_nonzero_rows() - num_variables() > 0;
+}
+
+size_t Matrix::num_variables() const {
+    size_t num_columns = _rows[0].size();
+    size_t num_vars = 0;
+    for(int i = 0; i < num_columns - 1; i++) {
+        for(auto &row : _rows) {
+            if(fabs(row[i]) <= DELTA) {
+                num_vars++;
+                break;
+            }
+        }
     }
-  }
-  return false;
+    return num_vars;
+}
+
+size_t Matrix::num_nonzero_rows() const {
+    size_t nonzero_rows = 0;
+    for(auto &row : _rows) {
+        if(!row.is_zero()) {
+            nonzero_rows++;
+        }
+    }
+    return nonzero_rows;
 }
 
 std::ostream &Matrix::write(std::ostream &os) const {

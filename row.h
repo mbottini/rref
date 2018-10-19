@@ -32,7 +32,7 @@ public:
   Row operator-() const;
 
   bool no_solutions() const;
-  bool infinite_solutions() const;
+  bool is_zero() const;
   std::ostream &write(std::ostream &os) const;
 };
 
