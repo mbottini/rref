@@ -15,6 +15,7 @@ row.o: row.cpp row.h
 
 professor: row.cpp matrix.cpp rref.cpp
 	python3 combine_files.py
+	${CC} ${CFLAGS} consolidated_rref.cpp -o rref
 
 clean:
 	rm -f rref
