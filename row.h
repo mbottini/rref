@@ -3,6 +3,9 @@
 #include <ostream>
 #include <utility>
 #include <vector>
+#include <cmath>
+
+#define DELTA 0.00001
 
 // Just a wrapper around a vector of Doubles.
 // Contains arithmetic operators and ostream for convenience.
@@ -27,6 +30,9 @@ public:
   Row operator/(double scalar) const;
   Row &operator/=(double scalar);
   Row operator-() const;
+
+  bool no_solutions() const;
+  bool infinite_solutions() const;
   std::ostream &write(std::ostream &os) const;
 };
 

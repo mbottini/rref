@@ -95,6 +95,24 @@ Matrix Matrix::triangular(std::ostream *os) const {
   return result;
 }
 
+bool Matrix::no_solutions() const {
+  for(auto &row : _rows) {
+    if(row.no_solutions()) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool Matrix::infinite_solutions() const {
+  for(auto &row : _rows) {
+    if(row.infinite_solutions()) {
+      return true;
+    }
+  }
+  return false;
+}
+
 std::ostream &Matrix::write(std::ostream &os) const {
   for (auto v : _rows) {
     os << v << "\n";

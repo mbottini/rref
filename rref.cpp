@@ -65,5 +65,13 @@ int main() {
   std::cout << "Result:\n";
   std::cout << result << "\n";
 
+  if(result.no_solutions()) {
+    std::cout << "No solutions!\n";
+  }
+
+  else if(result.infinite_solutions()) {
+    std::cout << "Infinite solutions!\n";
+  }
+
   return 0;
 }

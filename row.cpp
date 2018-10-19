@@ -1,4 +1,5 @@
 #include "row.h"
+#include <iostream>
 
 Row::Row(const std::vector<double> &orig) { _data = orig; }
 
@@ -52,6 +53,26 @@ Row Row::operator-() const {
     result_vec.push_back(-elem);
   }
   return Row(result_vec);
+}
+
+bool Row::no_solutions() const {
+    bool all_zeros = true;
+    for(auto it = _data.begin(); it != _data.end() - 1; ++it) {
+        if(fabs(*it) >= DELTA) {
+	    all_zeros = false;
+	}
+    }
+    return all_zeros && _data.back() != 0;
+}
+
+bool Row::infinite_solutions() const {
+    bool all_zeros = true;
+    for(auto it = _data.begin(); it != _data.end() - 1; ++it) {
+        if(fabs(*it) >= DELTA) {
+	    all_zeros = false;
+	}
+    }
+    return all_zeros && _data.back() == 0;
 }
 
 std::ostream &Row::write(std::ostream &os) const {

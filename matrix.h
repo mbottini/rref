@@ -16,6 +16,8 @@ public:
   Matrix rref(std::ostream *os = 0) const;
   void triangular_mut(std::ostream *os = 0);
   Matrix triangular(std::ostream *os = 0) const;
+  bool no_solutions() const;
+  bool infinite_solutions() const;
   std::ostream &write(std::ostream &os) const;
 };
 
