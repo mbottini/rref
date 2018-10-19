@@ -8,7 +8,7 @@ rref.o: rref.cpp
 	${CC} ${CFLAGS} -c rref.cpp
 
 matrix.o: matrix.cpp matrix.h
-	${CC} ${CLAGS} -c matrix.cpp
+	${CC} ${CFLAGS} -c matrix.cpp
 
 row.o: row.cpp row.h
 	${CC} ${CFLAGS} -c row.cpp 
