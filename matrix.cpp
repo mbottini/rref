@@ -11,7 +11,7 @@ void Matrix::swap_rows(size_t i1, size_t i2) {
 // to an ostream, it'll print each step of the rref process for you.
 void Matrix::rref_mut(std::ostream *os) {
   bool has_index;
-  for (size_t i = 0; i < _rows[0].size() - 1; i++) {
+  for (size_t i = 0; i < _rows[0].size() - 1 && i < _rows.size(); i++) {
     // If the current row has a 0 in the current column, we have to swap
     // it with another row that does have that index.
     if (_rows[i][i] == 0) {
@@ -49,7 +49,7 @@ void Matrix::rref_mut(std::ostream *os) {
 
 void Matrix::triangular_mut(std::ostream *os) {
   bool has_index;
-  for (size_t i = 0; i < _rows[0].size() - 1; i++) {
+  for (size_t i = 0; i < _rows[0].size() - 1 && i < _rows.size(); i++) {
     // If the current row has a 0 in the current column, we have to swap
     // it with another row that does have that index.
     if (_rows[i][i] == 0) {
