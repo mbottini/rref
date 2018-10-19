@@ -73,5 +73,9 @@ int main() {
     std::cout << "Infinite solutions!\n";
   }
 
+  else {
+    std::cout << "A single, unique solution exists.\n";
+  }
+
   return 0;
 }

@@ -113,7 +113,7 @@ size_t Matrix::num_variables() const {
     size_t num_vars = 0;
     for(int i = 0; i < num_columns - 1; i++) {
         for(auto &row : _rows) {
-            if(fabs(row[i]) <= DELTA) {
+            if(fabs(row[i]) > DELTA) {
                 num_vars++;
                 break;
             }
