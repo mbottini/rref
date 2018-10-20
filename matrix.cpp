@@ -1,4 +1,5 @@
 #include "matrix.h"
+
 Matrix::Matrix(const std::vector<Row> &rows) { _rows = rows; }
 
 // Modifies the matrix!
@@ -79,7 +80,6 @@ void Matrix::triangular_mut(std::ostream *os) {
     }
   }
 }
-    
 
 // Non-mutable version of the above. Creates a new matrix and performs
 // the mutable rref on that.
@@ -96,8 +96,8 @@ Matrix Matrix::triangular(std::ostream *os) const {
 }
 
 bool Matrix::no_solutions() const {
-  for(auto &row : _rows) {
-    if(row.no_solutions()) {
+  for (auto &row : _rows) {
+    if (row.no_solutions()) {
       return true;
     }
   }
@@ -105,31 +105,51 @@ bool Matrix::no_solutions() const {
 }
 
 bool Matrix::infinite_solutions() const {
-   return num_nonzero_rows() - num_variables() > 0;
+  return num_nonzero_rows() - num_variables() > 0;
 }
 
 size_t Matrix::num_variables() const {
-    size_t num_columns = _rows[0].size();
-    size_t num_vars = 0;
-    for(int i = 0; i < num_columns - 1; i++) {
-        for(auto &row : _rows) {
-            if(fabs(row[i]) > DELTA) {
-                num_vars++;
-                break;
-            }
-        }
+  size_t num_columns = _rows[0].size();
+  size_t num_vars = 0;
+  for (int i = 0; i < num_columns - 1; i++) {
+    for (auto &row : _rows) {
+      if (fabs(row[i]) > DELTA) {
+        num_vars++;
+        break;
+      }
     }
-    return num_vars;
+  }
+  return num_vars;
 }
 
 size_t Matrix::num_nonzero_rows() const {
-    size_t nonzero_rows = 0;
-    for(auto &row : _rows) {
-        if(!row.is_zero()) {
-            nonzero_rows++;
-        }
+  size_t nonzero_rows = 0;
+  for (auto &row : _rows) {
+    if (!row.is_zero()) {
+      nonzero_rows++;
     }
-    return nonzero_rows;
+  }
+  return nonzero_rows;
+}
+
+size_t Matrix::num_rows() const { return _rows.size(); }
+
+size_t Matrix::num_cols() const { return _rows[0].size(); }
+
+Matrix Matrix::operator>>(const Matrix &other) const {
+  std::vector<Row> result_vec;
+  for (auto const &pair : zip(_rows, other._rows)) {
+    result_vec.push_back(pair.first >> pair.second);
+  }
+  return result_vec;
+}
+
+Matrix Matrix::remove_middle(size_t stop_left, size_t extra) const {
+  std::vector<Row> result_vec;
+  for (auto v : _rows) {
+    result_vec.push_back(v.remove_middle(stop_left, extra));
+  }
+  return result_vec;
 }
 
 std::ostream &Matrix::write(std::ostream &os) const {

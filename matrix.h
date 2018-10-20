@@ -1,5 +1,6 @@
 #ifndef MATRIX_H
 #define MATRIX_H
+
 #include "row.h"
 
 // Just a wrapper around a vector of Rows.
@@ -20,6 +21,10 @@ public:
   bool infinite_solutions() const;
   size_t num_variables() const;
   size_t num_nonzero_rows() const;
+  size_t num_rows() const;
+  size_t num_cols() const;
+  Matrix operator>>(const Matrix &other) const;
+  Matrix remove_middle(size_t stop_left, size_t extra) const;
   std::ostream &write(std::ostream &os) const;
 };
 

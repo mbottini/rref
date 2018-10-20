@@ -55,24 +55,39 @@ Row Row::operator-() const {
   return Row(result_vec);
 }
 
+Row Row::operator>>(const Row &other) const {
+  std::vector<double> result_vec = _data;
+  result_vec.insert(result_vec.end(), other._data.begin(), other._data.end());
+  return result_vec;
+}
+
+Row Row::remove_middle(size_t stop_left, size_t extra) const {
+  std::vector<double> result_vec;
+  for (int i = 0; i < stop_left; i++) {
+    result_vec.push_back(_data[i]);
+  }
+  result_vec.push_back(_data[extra]);
+  return Row(result_vec);
+}
+
 bool Row::no_solutions() const {
-    bool all_zeros = true;
-    for(auto it = _data.begin(); it != _data.end() - 1; ++it) {
-        if(fabs(*it) >= DELTA) {
-	        all_zeros = false;
-	    }
+  bool all_zeros = true;
+  for (auto it = _data.begin(); it != _data.end() - 1; ++it) {
+    if (fabs(*it) >= DELTA) {
+      all_zeros = false;
     }
-    return all_zeros && _data.back() != 0;
+  }
+  return all_zeros && _data.back() != 0;
 }
 
 bool Row::is_zero() const {
-    bool all_zeros = true;
-    for(auto it = _data.begin(); it != _data.end() - 1; ++it) {
-        if(fabs(*it) >= DELTA) {
-	        all_zeros = false;
-	    }
+  bool all_zeros = true;
+  for (auto it = _data.begin(); it != _data.end() - 1; ++it) {
+    if (fabs(*it) >= DELTA) {
+      all_zeros = false;
     }
-    return all_zeros && _data.back() == 0;
+  }
+  return all_zeros && _data.back() == 0;
 }
 
 std::ostream &Row::write(std::ostream &os) const {
@@ -85,15 +100,3 @@ std::ostream &Row::write(std::ostream &os) const {
 }
 
 std::ostream &operator<<(std::ostream &os, const Row &r) { return r.write(os); }
-
-template <typename T1, typename T2>
-std::vector<std::pair<T1, T2>> zip(const std::vector<T1> &v1,
-                                   const std::vector<T2> &v2) {
-  std::vector<std::pair<T1, T2>> result_vec;
-  auto it1 = v1.begin();
-  auto it2 = v2.begin();
-  for (; it1 != v1.end() && it2 != v2.end(); ++it1, ++it2) {
-    result_vec.emplace_back(*it1, *it2);
-  }
-  return result_vec;
-}

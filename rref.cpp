@@ -42,13 +42,74 @@ Matrix create_matrix(size_t rows, size_t cols) {
   return Matrix(result_vec);
 }
 
+Matrix create_augmented_matrix(const Matrix &m) {
+  size_t rows = m.num_rows();
+  int num_solutions;
+  std::string input_line;
+  std::vector<double> parsed_line;
+  std::stringstream ss;
+  double current_double;
+  std::vector<std::vector<double>> result_cols;
+  std::vector<double> current_row;
+  std::vector<Row> result_rows;
+  bool good_input;
+
+  do {
+    good_input = true;
+    std::cout << "Input the number of solutions to the system. ";
+    if (!(std::cin >> num_solutions) || num_solutions < 1) {
+      good_input = false;
+      std::cout << "Invalid input. Try again.\n";
+      std::cin.clear();
+      std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+  } while (!good_input);
+
+  std::cin.clear();
+  std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+  for (int i = 0; i < num_solutions; i++) {
+    do {
+      parsed_line.clear();
+      good_input = true;
+      std::cout << "Input a line for solution column " << i + 1 << ": ";
+      std::getline(std::cin, input_line);
+      ss = std::stringstream(input_line);
+      while (parsed_line.size() != rows && ss >> current_double) {
+        parsed_line.push_back(current_double);
+      }
+      // If the stream ran out of chars, or there are leftover chars,
+      // it's invalid input.
+      if (ss.fail() || ss.rdbuf()->in_avail() > 0) {
+        good_input = false;
+        std::cout << "Invalid input. Try again.\n";
+      }
+    } while (!good_input);
+    result_cols.push_back(parsed_line);
+  }
+
+  std::cout << "Size of result_cols = " << result_cols.size() << "\n";
+
+  // We now have a vector of columns. Time to turn that into a vector of rows.
+  for (int i = 0; i < rows; i++) {
+    current_row.clear();
+    for (auto const &v : result_cols) {
+      current_row.push_back(v[i]);
+    }
+    std::cout << "Produced vector " << current_row << "\n";
+    result_rows.push_back(current_row);
+  }
+
+  return m >> Matrix(result_rows);
+}
+
 int main() {
   size_t rows, cols;
 
-  std::cout << "Input the number of rows: ";
+  std::cout << "Input the number of rows in the coefficient matrix: ";
   std::cin >> rows;
 
-  std::cout << "Input the number of columns: ";
+  std::cout << "Input the number of columns in the coefficient matrix: ";
   std::cin >> cols;
 
   Matrix m = create_matrix(rows, cols);
@@ -56,25 +117,17 @@ int main() {
   std::cout << "Your matrix:\n";
   std::cout << m;
 
-  std::cout << "Triangular form:\n";
-  std::cout << m.triangular();
+  Matrix augmented_m = create_augmented_matrix(m);
 
-  std::cout << "Showing the steps for rref:\n";
-  Matrix result = m.rref(&std::cout);
+  std::cout << "Your augmented matrix:\n";
+  std::cout << augmented_m;
 
-  std::cout << "Result:\n";
-  std::cout << result << "\n";
+  Matrix result_m = augmented_m.rref();
 
-  if(result.no_solutions()) {
-    std::cout << "No solutions!\n";
-  }
+  std::cout << "Individual solution matrices:\n";
 
-  else if(result.infinite_solutions()) {
-    std::cout << "Infinite solutions!\n";
-  }
-
-  else {
-    std::cout << "A single, unique solution exists.\n";
+  for (int i = cols; i < result_m.num_cols(); i++) {
+    std::cout << result_m.remove_middle(cols, i) << "\n";
   }
 
   return 0;
