@@ -96,7 +96,6 @@ Matrix create_augmented_matrix(const Matrix &m) {
     for (auto const &v : result_cols) {
       current_row.push_back(v[i]);
     }
-    std::cout << "Produced vector " << current_row << "\n";
     result_rows.push_back(current_row);
   }
 
