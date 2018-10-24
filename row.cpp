@@ -90,6 +90,14 @@ bool Row::is_zero() const {
   return all_zeros && _data.back() == 0;
 }
 
+Row Row::prettify() const {
+  std::vector<double> result_row;
+  for (double d : _data) {
+    result_row.push_back(fabs(d) < DELTA ? 0 : d);
+  }
+  return Row(result_row);
+}
+
 std::ostream &Row::write(std::ostream &os) const {
   os << "[ ";
   for (double elem : _data) {

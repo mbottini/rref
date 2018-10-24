@@ -36,6 +36,7 @@ public:
 
   bool no_solutions() const;
   bool is_zero() const;
+  Row prettify() const;
   std::ostream &write(std::ostream &os) const;
 };
 

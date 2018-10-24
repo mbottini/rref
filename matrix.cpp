@@ -86,13 +86,13 @@ void Matrix::triangular_mut(std::ostream *os) {
 Matrix Matrix::rref(std::ostream *os) const {
   Matrix result = *this;
   result.rref_mut(os);
-  return result;
+  return result.prettify();
 }
 
 Matrix Matrix::triangular(std::ostream *os) const {
   Matrix result = *this;
   result.triangular_mut(os);
-  return result;
+  return result.prettify();
 }
 
 bool Matrix::no_solutions() const {
@@ -149,7 +149,15 @@ Matrix Matrix::remove_middle(size_t stop_left, size_t extra) const {
   for (auto v : _rows) {
     result_vec.push_back(v.remove_middle(stop_left, extra));
   }
-  return result_vec;
+  return Matrix(result_vec);
+}
+
+Matrix Matrix::prettify() const {
+  std::vector<Row> result_vec;
+  for (auto v : _rows) {
+    result_vec.push_back(v.prettify());
+  }
+  return Matrix(result_vec);
 }
 
 std::ostream &Matrix::write(std::ostream &os) const {

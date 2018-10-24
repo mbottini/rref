@@ -25,6 +25,7 @@ public:
   size_t num_cols() const;
   Matrix operator>>(const Matrix &other) const;
   Matrix remove_middle(size_t stop_left, size_t extra) const;
+  Matrix prettify() const;
   std::ostream &write(std::ostream &os) const;
 };
 
